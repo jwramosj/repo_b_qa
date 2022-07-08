@@ -1,0 +1,39 @@
+name: ✔️ QA Test
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  EXECUTION_TAG: "@tag"
+  CI_PROJECT: ${{ github.repository }}
+  CI_USER: ${{ github.actor }}
+  CI_BRANCH_QA: ${{ github.ref_name }}
+  CI_SQUAD: QA
+  SLACK_CHANNEL: "#qa-core-team"
+  PARALLEL: 1
+
+jobs:
+  Desktop:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        Plan: [Chrome, Firefox]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Executing tests
+        env:
+          PLAN: ${{matrix.Plan}}
+        run: echo $PLAN
+        continue-on-error: true
+
+  Report:
+    runs-on: ubuntu-latest
+    needs: [Desktop]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Creation Report
+        run: echo "REPORT IS CREATED"
